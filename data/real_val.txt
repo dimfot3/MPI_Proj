@@ -1,6 +1,0 @@
-Pivot -1 ,116.669998
-Distance 766.200317 
-Distance 341.959656 
-Pivot 0 ,116.669998
-Distance 0.000000 
-Distance 813.118713 
