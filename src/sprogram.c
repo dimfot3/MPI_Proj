@@ -7,6 +7,7 @@
 
 void distributeByMedian(int leader_id, int num_of_proc, struct data* points, float* pivot_point)
 {
+    //termination term for recursive calls
     if(num_of_proc < 2)
         return;
     int world_rank;
@@ -33,14 +34,17 @@ void distributeByMedian(int leader_id, int num_of_proc, struct data* points, flo
     //transfer elements
     int counter = exchangePoints(points, table, world_rank, leader_id, num_of_proc);
     
-    //put points back in original array and recalculate distance
+    //put points back in original array
     for(int i = 0; i < counter; i++)
-        memcpy(points->points[points->idx_to_send[i]], points->points_to_sent+i*points->dim, sizeof(float)*points->dim);
-
+        memcpy(points->points[points->idx_to_send[i]], points->points_recieved+i*points->dim, sizeof(float)*points->dim);
+        
     //free unecessary resources and restore data state
     free(table);
     free(points->points_to_sent);
+    free(points->points_recieved);
     free(points->idx_to_send);
+
+    //recursirve call
     if(lower)
         distributeByMedian(leader_id, num_of_proc/2, points, pivot_point);
     else
@@ -74,18 +78,16 @@ int main(int argc, char** argv) {
     float *pivot_point = (float*)malloc(sizeof(float)*points.dim);
     if(world_rank == 0)
     {
-        pivot = rand()%points.num;
+        pivot = 12;//rand()%points.num;
         memcpy(pivot_point, points.points[pivot], sizeof(float)*points.dim);
         printf("Pivot is %d\n", pivot);       
     }
     MPI_Bcast(pivot_point, points.dim, MPI_FLOAT, 0, MPI_COMM_WORLD );
 
+    //distribute by median recursive procedure
     double t1, t2; 
     t1 = MPI_Wtime(); 
-
-    //distribute by median procedure
     distributeByMedian(0, world_size, &points, pivot_point);
-    
     calculateDistances(pivot_point, &points);
     MPI_Barrier(MPI_COMM_WORLD);
     t2 = MPI_Wtime(); 
@@ -100,7 +102,7 @@ int main(int argc, char** argv) {
         else
             printf("Distribution succeeded in %lf seconds\n", t2 - t1);
     }
-    MPI_Barrier(MPI_COMM_WORLD);
+    
     MPI_Finalize();
     return;
 }

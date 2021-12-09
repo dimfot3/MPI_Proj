@@ -1,19 +1,20 @@
-#include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
-#include "utils.h"
-#include <assert.h>
-#include <mpi.h>
+#include <stdio.h>
 #include <string.h>
+#include <assert.h>
+#include <math.h>
+#include <mpi.h>
+#include "utils.h"
+
 
 void line_to_info(char *line, int * arr, int len)
 {
+    int pos = 0;
     for(int i = 0; i < len-1; i++)
     {
-        sscanf(line, "%d ", &(arr[i]));
-        line+=3;
+        sscanf(line+=pos, "%d%n", &(arr[i]), &pos);
     }
-    sscanf(line, "%d\n", &(arr[len-1]));
+    sscanf(line+=pos, "%d%n", &(arr[len-1]), &pos);
 }
 
 void line_to_arr(char *line, float * arr, int len)
@@ -101,8 +102,7 @@ float partition(float *arr, int l, int r)
     return i;
 }
 
-
-double quickselect(float* arr, int left, int right, int k)
+float quickselect(float* arr, int left, int right, int k)
 {
     double b = -1, a = -1;
     while (left <= right) {
@@ -120,7 +120,6 @@ double quickselect(float* arr, int left, int right, int k)
     }
     return (b+a)/2;
 }
-
 
 float getMin(float *arr, int len)
 {
@@ -175,4 +174,3 @@ int evaluate_result(float* arr, int len, int num_of_proc)
     }
     return suc;
 }
-

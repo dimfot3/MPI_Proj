@@ -26,6 +26,7 @@ void groupedBcast_median(float *median, int leader_id, int world_rank, int num_o
 void splitByMedian(float median, struct data *points, int lower)
 {
     points->points_to_sent = (float*) malloc(sizeof(float*)*points->num*points->dim);
+    points->points_recieved = (float*) malloc(sizeof(float*)*points->num*points->dim);
     points->idx_to_send = (int*) malloc(sizeof(int)*points->num);
     int counter = 0;
     for(int i = 0; i < points->num; i++)
@@ -77,11 +78,11 @@ int exchangePoints(struct data* points, int *table, int world_rank, int leader_i
     while(1)
     {
         int num_to_change = min(table[world_rank-leader_id], table[co_idx-leader_id]);
-        //printf("Process %d: num to send %d in step %d\n", world_rank, num_to_change, step);
+        //printf("Process %d: num to send %d in step %d\n", world_rank, num_to_change*points->dim, step);
         MPI_Request req;
         MPI_Isend(points->points_to_sent+counter*points->dim, num_to_change*points->dim, MPI_FLOAT, co_idx, 0, MPI_COMM_WORLD, &req);
         //printf("Process %d: what sent %f\n", world_rank, points->points_to_sent[0]);
-        MPI_Recv(points->points_to_sent+counter*points->dim, num_to_change*points->dim, MPI_FLOAT, co_idx, 0, MPI_COMM_WORLD, NULL);
+        MPI_Recv(points->points_recieved+counter*points->dim, num_to_change*points->dim, MPI_FLOAT, co_idx, 0, MPI_COMM_WORLD, NULL);
         //printf("Process %d: what recieved %f\n", world_rank, points->points_to_sent[0][0]);
         MPI_Status myStatus;
         MPI_Wait(&req, &myStatus);
@@ -89,16 +90,14 @@ int exchangePoints(struct data* points, int *table, int world_rank, int leader_i
         step++;
         counter += num_to_change;
         points->num_to_send -= num_to_change;
-        
+
         if(points->num_to_send == 0)
-        {
             break;
-        }
+        
         getNextCoIdx(&co_idx, leader_id, world_rank, num_of_proc);
     }
     return counter;
 }
-
 
 void updateTable(int* table, int n_process, int step)
 {
