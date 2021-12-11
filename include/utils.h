@@ -42,4 +42,7 @@ int sum(int* arr, int len);
 //evaluation: the max of one process should be less than the min of the next one
 int evaluate_result(float* arr, int len, int num_of_proc);
 
+
+//save time
+void save_time(struct data *points, int num_of_proc, float time);
 #endif

@@ -66,9 +66,9 @@ int main(int argc, char** argv) {
     {
         printf("Name of device: %s, Rank: %d, Total processors: %d \n", processor_name, world_rank, world_size);
     }
-
+    int dt_opt = 0;
+    char *path = argv[1];
     //load points
-    char path[] = "./data/file.txt";
     struct data points;
     int verbose = world_rank==0 ? 1 : 0;
     get_points(path, &points, world_rank, world_size, verbose);  
@@ -78,7 +78,7 @@ int main(int argc, char** argv) {
     float *pivot_point = (float*)malloc(sizeof(float)*points.dim);
     if(world_rank == 0)
     {
-        pivot = 12;//rand()%points.num;
+        pivot = rand()%points.num;
         memcpy(pivot_point, points.points[pivot], sizeof(float)*points.dim);
         printf("Pivot is %d\n", pivot);       
     }
@@ -100,7 +100,11 @@ int main(int argc, char** argv) {
         if(succ == 0)
             printf("Distribution failed\n");
         else
+        {
             printf("Distribution succeeded in %lf seconds\n", t2 - t1);
+            save_time(&points, world_size, (float)(t2 - t1));
+        }
+            
     }
     
     MPI_Finalize();

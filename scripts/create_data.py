@@ -27,7 +27,7 @@ def get_args(argv):
 
 def main(num, dim):
     mat = np.random.rand(num, dim) * 1000
-    f = open("../data/file.txt", 'w+')
+    f = open(f"../data/dt_0_{num}_{dim}.txt", 'w+')
     f.write(f"{num} {dim}\n")
     np.savetxt(f, mat, fmt='%.2f')
     f.close()

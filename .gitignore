@@ -1,1 +1,4 @@
 build/
+data/
+scripts/FashionMNIST/
+scripts/MNIST/
