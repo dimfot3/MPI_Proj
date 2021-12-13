@@ -179,6 +179,6 @@ void save_time(struct data *points, int num_of_proc, float time)
 {
     FILE *fp;
     fp = fopen("out/res.txt", "a+");
-    fprintf(fp, "%d, %d, %f \n", points->num*num_of_proc, num_of_proc, time);
+    fprintf(fp, "%d, %d, %d, %f \n", points->num*num_of_proc, points->dim,num_of_proc, time);
     fclose(fp);
 }
