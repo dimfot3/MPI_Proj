@@ -66,7 +66,6 @@ void get_points(char *path, struct data *dp, int id, int total_proc, int verbose
 
 void calculateDistances(float *pivot, struct data *dp)
 {
-    free(dp->dist);
     dp->dist = (float*)malloc(sizeof(float)*dp->num);
     for(int i = 0; i < dp->num; i++)
     {

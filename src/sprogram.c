@@ -43,7 +43,7 @@ void distributeByMedian(int leader_id, int num_of_proc, struct data* points, flo
     free(points->points_to_sent);
     free(points->points_recieved);
     free(points->idx_to_send);
-
+    free(points->dist);
     //recursirve call
     if(lower)
         distributeByMedian(leader_id, num_of_proc/2, points, pivot_point);
