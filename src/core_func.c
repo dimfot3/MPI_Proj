@@ -91,7 +91,7 @@ int exchangePoints(struct data* points, int *table, int world_rank, int leader_i
         counter += num_to_change;
         points->num_to_send -= num_to_change;
 
-        if(points->num_to_send == 0)
+        if(points->num_to_send == 0 || sum(table, num_of_proc)%2==1)
             break;
         
         getNextCoIdx(&co_idx, leader_id, world_rank, num_of_proc);

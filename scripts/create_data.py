@@ -26,7 +26,9 @@ def get_args(argv):
 
 
 def main(num, dim):
-    mat = np.random.rand(num, dim) * 1000
+    #mat = np.random.rand(num, dim) * 1000
+    #mat = np.random.normal(0, 1000, [num,dim])
+    mat = np.random.exponential(scale=1000, size=[num,dim])
     f = open(f"../data/dt_0_{num}_{dim}.txt", 'w+')
     f.write(f"{num} {dim}\n")
     np.savetxt(f, mat, fmt='%.2f')

@@ -34,14 +34,12 @@ def main(opt, num):
     	print("Wrong option\n")
     	sys.exit()
     data_len = min(len(dataset), num)
+    dim = np.asarray(dataset[0][0]).reshape(1,-1)[0].shape[0]
     f = open(f"../data/dt_{opt}_{num}.txt", "w")
-    f.write(f"{data_len} {np.asarray(dataset[0][0]).reshape(1,-1)[0].shape[0]}\n")
+    f.write(f"{data_len} {dim}\n")
     
-    arr = np.array([])
-    for i in range(data_len):
-        row = np.asarray(dataset[i][0]).reshape(1,-1)[0]
-        arr = np.append(arr, row, axis=0)
-    np.savetxt(f, np.reshape(arr, (data_len, -1)), fmt='%.2f')
+    arr = dataset.data.numpy().reshape(-1,dim)
+    np.savetxt(f, arr[:data_len], fmt='%.2f')
     f.close()
         
 
