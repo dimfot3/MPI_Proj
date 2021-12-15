@@ -23,3 +23,8 @@ target_link_libraries(sprogram ${MPI_C_LIBRARIES} core_fun utils)
 file(COPY data DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY out DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY ses.sh DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+if(BUILD_TESTING)
+    enable_testing()
+    add_subdirectory(tests) 
+endif(BUILD_TESTING)
