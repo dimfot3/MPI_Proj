@@ -11,6 +11,7 @@ void distributeByMedian(int leader_id, int num_of_proc, struct data* points, flo
     if(num_of_proc < 2)
         return;
     int world_rank;
+    
     MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
 
     calculateDistances(pivot_point, points);
@@ -23,14 +24,15 @@ void distributeByMedian(int leader_id, int num_of_proc, struct data* points, flo
         median = quickselect(points->total_dist, 0, points->num*num_of_proc-1, points->num*num_of_proc/2);
     groupedBcast_median(&median, leader_id, world_rank, num_of_proc);
 
+
     int lower = world_rank - leader_id < (int)(num_of_proc / 2) ? 1 : 0;
     splitByMedian(median, points, lower);
-
+    //printf("Process %d: Median is %f\n", world_rank, median);
     //create and broadcast transfer table
     int* table = (int*) malloc(sizeof(int)*num_of_proc);
     table[world_rank-leader_id] = points->num_to_send;
     groupedBcast_table(table, leader_id, world_rank, num_of_proc);
-
+        
     //transfer elements
     int counter = exchangePoints(points, table, world_rank, leader_id, num_of_proc);
     
@@ -45,10 +47,11 @@ void distributeByMedian(int leader_id, int num_of_proc, struct data* points, flo
     free(points->idx_to_send);
     free(points->dist);
     //recursirve call
+
     if(lower)
         distributeByMedian(leader_id, num_of_proc/2, points, pivot_point);
     else
-        distributeByMedian(num_of_proc/2, num_of_proc/2, points, pivot_point);
+        distributeByMedian(num_of_proc/2+leader_id, num_of_proc/2, points, pivot_point);
 }
 
 int main(int argc, char** argv) {

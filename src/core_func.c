@@ -78,14 +78,16 @@ int exchangePoints(struct data* points, int *table, int world_rank, int leader_i
     while(1)
     {
         int num_to_change = min(table[world_rank-leader_id], table[co_idx-leader_id]);
-        //printf("Process %d: num to send %d in step %d\n", world_rank, num_to_change*points->dim, step);
-        MPI_Request req;
-        MPI_Isend(points->points_to_sent+counter*points->dim, num_to_change*points->dim, MPI_FLOAT, co_idx, 0, MPI_COMM_WORLD, &req);
-        //printf("Process %d: what sent %f\n", world_rank, points->points_to_sent[0]);
-        MPI_Recv(points->points_recieved+counter*points->dim, num_to_change*points->dim, MPI_FLOAT, co_idx, 0, MPI_COMM_WORLD, NULL);
-        //printf("Process %d: what recieved %f\n", world_rank, points->points_to_sent[0][0]);
-        MPI_Status myStatus;
-        MPI_Wait(&req, &myStatus);
+        if(num_to_change!=0){
+            printf("Process %d: num to send %d in step %d\n", world_rank, num_to_change, step);
+            MPI_Request req;
+            MPI_Isend(points->points_to_sent+counter*points->dim, num_to_change*points->dim, MPI_FLOAT, co_idx, 0, MPI_COMM_WORLD, &req);
+            //printf("Process %d: what sent %f\n", world_rank, points->points_to_sent[0]);
+            MPI_Recv(points->points_recieved+counter*points->dim, num_to_change*points->dim, MPI_FLOAT, co_idx, 0, MPI_COMM_WORLD, NULL);
+            //printf("Process %d: what recieved %f\n", world_rank, points->points_to_sent[0][0]);
+            MPI_Status myStatus;
+            MPI_Wait(&req, &myStatus);
+        }
         updateTable(table, num_of_proc, step);
         step++;
         counter += num_to_change;
@@ -103,10 +105,10 @@ void updateTable(int* table, int n_process, int step)
 {
     for(int i = 0; i < n_process/2; i++)
     {
-        int idx = i + step < n_process/2 ? i + step : (n_process/2)%(i + step);
-        int temp_change = min(table[idx], table[n_process/2+idx]);
-        table[idx] -= temp_change;
-        table[n_process/2+idx] -= temp_change;
+        int co_idx = (i + step)%(n_process/2) + n_process/2;
+        int temp_change = min(table[i], table[co_idx]);
+        table[i] -= temp_change;
+        table[co_idx] -= temp_change;
     }
 }
 
@@ -121,10 +123,10 @@ void getNextCoIdx(int *co_idx, int leader_id, int world_rank, int num_of_proc)
     }
     else
     {
-        if(*co_idx == num_of_proc/2+leader_id-1)
-            *co_idx = leader_id;
+        if(*co_idx == 0)
+            *co_idx = num_of_proc/2+leader_id-1;
         else
-            (*co_idx)++;
+            (*co_idx)--;
     }
 }
 

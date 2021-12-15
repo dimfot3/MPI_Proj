@@ -5,7 +5,7 @@
 #include <math.h>
 #include <mpi.h>
 #include "utils.h"
-
+#include "float.h"
 
 void line_to_info(char *line, int * arr, int len)
 {
@@ -122,7 +122,7 @@ float quickselect(float* arr, int left, int right, int k)
 
 float getMin(float *arr, int len)
 {
-    float min = 10000000000;
+    float min = FLT_MAX;
     for(int i = 0; i < len; i++)
     {
         if(arr[i]<min)
@@ -135,7 +135,7 @@ float getMin(float *arr, int len)
 
 float getMax(float *arr, int len)
 {
-    float max = -1000000;
+    float max = FLT_MIN;
     for(int i = 0; i < len; i++)
     {
         if(arr[i]>max)
