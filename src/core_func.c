@@ -79,7 +79,7 @@ int exchangePoints(struct data* points, int *table, int world_rank, int leader_i
     {
         int num_to_change = min(table[world_rank-leader_id], table[co_idx-leader_id]);
         if(num_to_change!=0){
-            printf("Process %d: num to send %d in step %d\n", world_rank, num_to_change, step);
+            //printf("Process %d: num to send %d in step %d\n", world_rank, num_to_change, step);
             MPI_Request req;
             MPI_Isend(points->points_to_sent+counter*points->dim, num_to_change*points->dim, MPI_FLOAT, co_idx, 0, MPI_COMM_WORLD, &req);
             //printf("Process %d: what sent %f\n", world_rank, points->points_to_sent[0]);
@@ -117,13 +117,13 @@ void getNextCoIdx(int *co_idx, int leader_id, int world_rank, int num_of_proc)
     if(world_rank < num_of_proc/2+leader_id)
     {
         if(*co_idx == num_of_proc+leader_id-1)
-            *co_idx = num_of_proc/2;
+            *co_idx = num_of_proc/2 + leader_id;
         else
             (*co_idx)++;
     }
     else
     {
-        if(*co_idx == 0)
+        if(*co_idx == leader_id)
             *co_idx = num_of_proc/2+leader_id-1;
         else
             (*co_idx)--;
