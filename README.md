@@ -37,6 +37,6 @@ The program outputs to the console if the distribution succeded. In case of succ
 
 In addition to this there are some GoogleTests to verify the correctness of some basic utilities.
 To build them:
-1. ``cmake -BUILD_TESTING=ON``
+1. ``cmake -BUILD_TESTING=ON ..``
 2. ``make``
 3. ``make test`` or ``ctest -V`` to see the verbose of failing tests.
