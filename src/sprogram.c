@@ -36,7 +36,7 @@ void distributeByMedian(int leader_id, int num_of_proc, struct data* points, flo
     //transfer elements
     exchangePoints(points, table, world_rank, leader_id, num_of_proc);
     
-    //this block is used when median is included in distances one or more times
+    //this block is used when median is included in distances one or more
     if(sum(table, num_of_proc) != 0)
     {
         table[world_rank-leader_id] = points->num_to_send != 0 ? points->num_to_send : points->num_of_median;
@@ -91,7 +91,7 @@ int main(int argc, char** argv) {
     float *pivot_point = (float*)malloc(sizeof(float)*points.dim);
     if(world_rank == 0)
     {
-        pivot = 6569;
+        pivot = rand()%points.num;
         memcpy(pivot_point, points.points[pivot], sizeof(float)*points.dim);
         printf("Pivot is %d\n", pivot);       
     }
