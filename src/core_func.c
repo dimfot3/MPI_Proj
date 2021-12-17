@@ -40,6 +40,7 @@ void splitByMedian(float median, struct data *points, int lower)
             points->idx_to_send[counter] = i;
             counter++;
         }
+        //this is used to handle median elemtns as balander
         if(points->dist[i] == median)
         {
             memcpy(temp_median_points+median_counter*points->dim, points->points[i], sizeof(float)*points->dim);
@@ -50,13 +51,14 @@ void splitByMedian(float median, struct data *points, int lower)
     }
     points->num_to_send = counter;
     points->num_of_median = median_counter;
-
+    //this is used to handle median elemtns as balander
     for(int i = 0 ; i < median_counter; i++)
     {
         memcpy(points->points_to_sent+counter*points->dim, temp_median_points, sizeof(float)*points->dim*median_counter);
         memcpy(points->idx_to_send+counter, temp_median_idx, sizeof(int)*median_counter);
     }
-    
+    free(temp_median_idx);
+    free(temp_median_points);
 }
 
 void transmitDistances(struct data *points, int world_rank, int leader_id, int num_of_proc)
