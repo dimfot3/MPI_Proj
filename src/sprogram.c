@@ -44,6 +44,8 @@ void distributeByMedian(int leader_id, int num_of_proc, struct data* points, flo
         {
             if(table[i] == 0)
                 balander_table[i] = 1;
+            else
+                balander_table[i] = 0;
         }
         table[world_rank-leader_id] = points->num_to_send != 0 ? points->num_to_send : points->num_of_median;
         groupedBcast_table(table, leader_id, world_rank, num_of_proc);
