@@ -32,14 +32,24 @@ void distributeByMedian(int leader_id, int num_of_proc, struct data* points, flo
     int* table = (int*) malloc(sizeof(int)*num_of_proc);
     table[world_rank-leader_id] = points->num_to_send;
     groupedBcast_table(table, leader_id, world_rank, num_of_proc);
-        
+    points->num_sent = 0;
     //transfer elements
-    int counter = exchangePoints(points, table, world_rank, leader_id, num_of_proc);
+    exchangePoints(points, table, world_rank, leader_id, num_of_proc);
+    
+    //this block is used when median is included in distances one or more times
+    if(sum(table, num_of_proc) != 0)
+    {
+        table[world_rank-leader_id] = points->num_to_send != 0 ? points->num_to_send : points->num_of_median;
+        groupedBcast_table(table, leader_id, world_rank, num_of_proc);
+        exchangePoints(points, table, world_rank, leader_id, num_of_proc);
+    }
     
     //put points back in original array
-    for(int i = 0; i < counter; i++)
+    for(int i = 0; i < points->num_sent; i++)
+    {
         memcpy(points->points[points->idx_to_send[i]], points->points_recieved+i*points->dim, sizeof(float)*points->dim);
-        
+    }
+
     //free unecessary resources and restore data state
     free(table);
     free(points->points_to_sent);
@@ -81,7 +91,7 @@ int main(int argc, char** argv) {
     float *pivot_point = (float*)malloc(sizeof(float)*points.dim);
     if(world_rank == 0)
     {
-        pivot = rand()%points.num;
+        pivot = 6569;
         memcpy(pivot_point, points.points[pivot], sizeof(float)*points.dim);
         printf("Pivot is %d\n", pivot);       
     }

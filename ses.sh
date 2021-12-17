@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for i in {2..4..2}
+for i in 4
 do 
 	for file in $(ls data/$1)
 	do

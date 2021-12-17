@@ -14,9 +14,11 @@ struct data
     float* points_recieved;     //elements that need to be sent, they will be stored in contigious memory!
     int* idx_to_send;     //idx of elements that will be sent in the points array
     int num_to_send; //number of points to send
+    int num_sent; //number of points to send
     int dim;        //dimension of points
     int num;        //num of points (for this process)
     int proc;       //num of processes
+    int* num_of_median;     //number of medians
 };
 
 //process gets data corresponding to a process

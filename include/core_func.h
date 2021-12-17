@@ -16,7 +16,7 @@ void splitByMedian(float median, struct data *points, int lower);
 void transmitDistances(struct data *points, int world_rank, int leader_id, int num_of_proc);
 
 //exchange procedure between processes
-int exchangePoints(struct data* points, int *table, int world_rank, int leader_id, int num_of_proc);
+void exchangePoints(struct data* points, int *table, int world_rank, int leader_id, int num_of_proc);
 
 //update the exchange table based on step
 void updateTable(int* table, int process, int step);
