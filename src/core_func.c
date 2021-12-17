@@ -116,6 +116,42 @@ int exchangePoints(struct data* points, int *table, int world_rank, int leader_i
             break;
         getNextCoIdx(&co_idx, leader_id, world_rank, num_of_proc);
     }
+}
+
+void exchangeMedians(struct data* points, int *table, int world_rank, int leader_id, int num_of_proc, int* balander_table)
+{
+    int step = 0;
+    int co_idx = world_rank-leader_id < num_of_proc/2 ? num_of_proc/2 + world_rank: world_rank - num_of_proc/2;
+    while(1)
+    {
+        int num_to_change;
+        if((balander_table[world_rank-leader_id] + balander_table[co_idx-leader_id]) == 2)
+        {
+            num_to_change = 0;
+        }
+        else
+        {
+            num_to_change = min(table[world_rank-leader_id], table[co_idx-leader_id]);
+        }
+        if(num_to_change!=0){
+            //printf("Process %d: num to send %d in step %d\n", world_rank, num_to_change, step);
+            MPI_Request req;
+            MPI_Isend(points->points_to_sent+points->num_sent*points->dim, num_to_change*points->dim, MPI_FLOAT, co_idx, 0, MPI_COMM_WORLD, &req);
+            //printf("Process %d: what sent %f\n", world_rank, points->points_to_sent[0]);
+            MPI_Recv(points->points_recieved+points->num_sent*points->dim, num_to_change*points->dim, MPI_FLOAT, co_idx, 0, MPI_COMM_WORLD, NULL);
+            //printf("Process %d: what recieved %f\n", world_rank, points->points_to_sent[0][0]);
+            MPI_Status myStatus;
+            MPI_Wait(&req, &myStatus);
+        }
+        updateTable(table, num_of_proc, step);
+        step++;
+        points->num_sent += num_to_change;
+        points->num_to_send -= num_to_change;
+
+        if(step>num_of_proc+1)
+            break;
+        getNextCoIdx(&co_idx, leader_id, world_rank, num_of_proc);
+    }
     points->num_sent = points->num_sent;
 }
 
@@ -167,5 +203,3 @@ void groupedBcast_table(int* table, int leader_id, int world_rank, int num_of_pr
         MPI_Recv(table+i, 1, MPI_INT, i+leader_id, 0, MPI_COMM_WORLD, NULL);
     }
 }
-
-

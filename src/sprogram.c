@@ -38,10 +38,17 @@ void distributeByMedian(int leader_id, int num_of_proc, struct data* points, flo
     
     //this block is used when median is included in distances one or more
     if(sum(table, num_of_proc) != 0)
-    {
+    {   
+        int* balander_table = (int*) malloc(sizeof(int)*num_of_proc);
+        for(int i = 0; i < num_of_proc; i++)
+        {
+            if(table[i] == 0)
+                balander_table[i] = 1;
+        }
         table[world_rank-leader_id] = points->num_to_send != 0 ? points->num_to_send : points->num_of_median;
         groupedBcast_table(table, leader_id, world_rank, num_of_proc);
-        exchangePoints(points, table, world_rank, leader_id, num_of_proc);
+        exchangeMedians(points, table, world_rank, leader_id, num_of_proc, balander_table);
+        free(balander_table);
     }
     
     //put points back in original array
@@ -91,7 +98,7 @@ int main(int argc, char** argv) {
     float *pivot_point = (float*)malloc(sizeof(float)*points.dim);
     if(world_rank == 0)
     {
-        pivot = rand() % points.num;
+        pivot = 6569;
         memcpy(pivot_point, points.points[pivot], sizeof(float)*points.dim);
         printf("Pivot is %d\n", pivot);       
     }
