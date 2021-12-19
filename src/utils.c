@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include<math.h>
 #include <math.h>
 #include <mpi.h>
 #include "utils.h"
@@ -10,31 +11,29 @@
 void line_to_info(char *line, int * arr, int len)
 {
     int pos = 0;
-    for(int i = 0; i < len-1; i++)
+    for(int i = 0; i < len; i++)
     {
         sscanf(line+=pos, "%d%n", &(arr[i]), &pos);
     }
-    sscanf(line+=pos, "%d%n", &(arr[len-1]), &pos);
 }
 
 void line_to_arr(char *line, float * arr, int len)
 {
     int pos = 0;
-    for(int i = 0; i < len-1; i++)
+    for(int i = 0; i < len; i++)
     {
         sscanf(line+=pos, "%f%n", &(arr[i]), &pos);
     }
-    sscanf(line+=pos, "%f%n", &(arr[len-1]), &pos);
 }
 
 void get_points(char *path, struct data *dp, int id, int total_proc, int verbose)
 {
-    //finds the name of the file with the id
+    //opten a file that containes the points
     FILE *fp;
     char info_buff[50];
     fp = fopen(path, "r");
+    //read the first line which contains the info(number of points and dimension) and saves them to data structure
     fgets(info_buff, 50, (FILE*)fp);
-
     int *info  = (int*)malloc(2 * sizeof(int));
     line_to_info(info_buff, info, 2);
     assert(total_proc % 2 == 0);
@@ -42,13 +41,14 @@ void get_points(char *path, struct data *dp, int id, int total_proc, int verbose
     dp->num = info[0]/total_proc;
     dp->dim = info[1];
     dp->proc = total_proc;
-    dp->points = (float**) malloc(sizeof(float*)*dp->num);
     if(verbose)
     {
         printf("Loading file %s ...\n", path);
         printf("Number of points: %d, Point dimensions: %d, Num of processes: %d\n", info[0], dp->dim, dp->proc);
         printf("Number of points per process %d\n", dp->num);
     }
+    //saved in data structure the points (only the ones that belong in this process)
+    dp->points = (float**) malloc(sizeof(float*)*dp->num);
     for(int i = 0; i < (int)info[0]; i++)
     {
         if(i >= dp->num*(id + 1))
@@ -75,7 +75,7 @@ void calculateDistances(float *pivot, struct data *dp)
             float diff = pivot[j] - dp->points[i][j];
             temp += diff*diff;
         }
-        dp->dist[i] = (float) sqrt((float)temp);
+        dp->dist[i] = sqrtf(temp);
     }
 }
  
@@ -117,55 +117,63 @@ float quickselect(float* arr, int left, int right, int k)
         if(b != -1 && a != -1)
             break;
     }
+    //if the number of elements is odd return the k-1 element
+    if((right-left+1)%2 == 1)
+    {
+        return a;
+    }
+    //if the number of elements is even return the mean of k-1 and k.
     return (b+a)/2;
 }
 
 float getMin(float *arr, int len)
 {
-    float min = FLT_MAX;
+    float min_el = FLT_MAX;
     for(int i = 0; i < len; i++)
     {
-        if(arr[i]<min)
+        if(arr[i] < min_el)
         {
-            min = arr[i];
+            min_el = arr[i];
         }
     }
-    return min;
+    return min_el;
 }
 
 float getMax(float *arr, int len)
 {
-    float max = FLT_MIN;
+    float max_el = FLT_MIN;
     for(int i = 0; i < len; i++)
     {
-        if(arr[i]>max)
+        if(arr[i] > max_el)
         {
-            max = arr[i];
+            max_el = arr[i];
         }
     }
-    return max;
+    return max_el;
 }
 
 int sum(int* arr, int len)
 {
-    int sum = 0;
+    int sum_arr = 0;
     for(int i = 0; i < len; i++)
     {
-        sum += arr[i];
+        sum_arr += arr[i];
     }
-    return sum;
+    return sum_arr;
 }
 
 int evaluate_result(float* arr, int len, int num_of_proc)
 {
     int suc = 1;
     float min_arr[num_of_proc], max_arr[num_of_proc];
+    //find the min max of every process
     for(int i = 0; i < num_of_proc; i++)
     {
         min_arr[i] = getMin(arr+i*len, len);
         max_arr[i] = getMax(arr+i*len, len);
         printf("Process %d: [%f %f]\n", i, min_arr[i], max_arr[i]);
     }
+    //checks if the max or i process is smaller than the min of i+1
     for(int i = 0; i < num_of_proc-1; i++)
     {
         if(max_arr[i] > min_arr[i+1])

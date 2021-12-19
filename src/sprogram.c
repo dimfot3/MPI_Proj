@@ -1,3 +1,10 @@
+/**
+ * Author: Fotiou Dimitrios
+ * AEM: 9650
+ * Here is the main function and the distribute by median function
+ **/
+
+
 #include <mpi.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -36,7 +43,7 @@ void distributeByMedian(int leader_id, int num_of_proc, struct data* points, flo
     //transfer elements
     exchangePoints(points, table, world_rank, leader_id, num_of_proc);
     
-    //this block is used when median is included in distances one or more
+    //this block is used when median is included in distances one or more times
     if(sum(table, num_of_proc) != 0)
     {   
         int* balander_table = (int*) malloc(sizeof(int)*num_of_proc);
@@ -100,13 +107,13 @@ int main(int argc, char** argv) {
     float *pivot_point = (float*)malloc(sizeof(float)*points.dim);
     if(world_rank == 0)
     {
-        pivot = rand()%points.num;
+        pivot = 5;
         memcpy(pivot_point, points.points[pivot], sizeof(float)*points.dim);
         printf("Pivot is %d\n", pivot);       
     }
     MPI_Bcast(pivot_point, points.dim, MPI_FLOAT, 0, MPI_COMM_WORLD );
 
-    //distribute by median recursive procedure
+    //distribute by median recursive procedure and then calculate again the distances
     double t1, t2; 
     t1 = MPI_Wtime(); 
     distributeByMedian(0, world_size, &points, pivot_point);
@@ -125,10 +132,10 @@ int main(int argc, char** argv) {
         {
             printf("Distribution succeeded in %lf seconds\n", t2 - t1);
             save_time(&points, world_size, (float)(t2 - t1));
-        }
-            
+        } 
     }
     MPI_Barrier(MPI_COMM_WORLD);
     MPI_Finalize();
-    return;
+
+    return 0;
 }

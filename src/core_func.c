@@ -146,7 +146,10 @@ void exchangeMedians(struct data* points, int *table, int world_rank, int leader
         updateTable(table, num_of_proc, step);
         step++;
         points->num_sent += num_to_change;
-        points->num_to_send -= num_to_change;
+        if(balander_table[world_rank-leader_id]==1)
+            points->num_of_median -= num_to_change;
+        else
+            points->num_to_send -= num_to_change;
 
         if(step>num_of_proc+1)
             break;
