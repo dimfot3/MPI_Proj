@@ -143,7 +143,7 @@ void exchangeMedians(struct data* points, int *table, int world_rank, int leader
             MPI_Status myStatus;
             MPI_Wait(&req, &myStatus);
         }
-        updateTable(table, num_of_proc, step);
+        updateTablev2(table, num_of_proc, step, balander_table);
         step++;
         points->num_sent += num_to_change;
         if(balander_table[world_rank-leader_id]==1)
