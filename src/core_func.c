@@ -169,6 +169,19 @@ void updateTable(int* table, int n_process, int step)
     }
 }
 
+void updateTablev2(int* table, int n_process, int step, int* balander)
+{
+    for(int i = 0; i < n_process/2; i++)
+    {
+        int co_idx = (i + step)%(n_process/2) + n_process/2;
+        int temp_change = 0;
+        if(balander[i] + balander[co_idx] != 2)
+            temp_change = min(table[i], table[co_idx]); 
+        table[i] -= temp_change;
+        table[co_idx] -= temp_change;
+    }
+}
+
 void getNextCoIdx(int *co_idx, int leader_id, int world_rank, int num_of_proc)
 {
     if(world_rank < num_of_proc/2+leader_id)
