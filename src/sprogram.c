@@ -107,7 +107,7 @@ int main(int argc, char** argv) {
     float *pivot_point = (float*)malloc(sizeof(float)*points.dim);
     if(world_rank == 0)
     {
-        pivot = 5;
+        pivot = rand()%points.num;
         memcpy(pivot_point, points.points[pivot], sizeof(float)*points.dim);
         printf("Pivot is %d\n", pivot);       
     }
