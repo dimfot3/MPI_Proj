@@ -34,7 +34,7 @@ void get_points(char *path, struct data *dp, int id, int total_proc, int verbose
         fread(temp, sizeof(float),dp->dim, fp);
         if(i < dp->num * id)
             continue;
-        dp->points[i - dp->num * id] = (float*) calloc(dp->dim,sizeof(float));
+        dp->points[i - dp->num * id] = (float*) malloc(dp->dim*sizeof(float));
         memcpy(dp->points[i - dp->num * id], temp, dp->dim*sizeof(float));
     }
     fclose(fp);
