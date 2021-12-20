@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.2)
-set(CMAKE_C_COMPILER "/usr/local/bin/mpicc")
+set(CMAKE_C_COMPILER mpicc)
 
 project(mpi_proj C CXX)
 
