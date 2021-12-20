@@ -73,6 +73,7 @@ void distributeByMedian(int leader_id, int num_of_proc, struct data* points, flo
     free(points->points_recieved);
     free(points->idx_to_send);
     free(points->dist);
+    free(points->total_dist);
     //recursirve call
 
     if(lower)
@@ -108,7 +109,7 @@ int main(int argc, char** argv) {
     float *pivot_point = (float*)malloc(sizeof(float)*points.dim);
     if(world_rank == 0)
     {
-        pivot = rand()%points.num;
+        pivot = rand() % points.num;
         memcpy(pivot_point, points.points[pivot], sizeof(float)*points.dim);
         printf("Pivot is %d\n", pivot);       
     }
