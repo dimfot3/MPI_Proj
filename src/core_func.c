@@ -6,6 +6,21 @@
 #include <mpi.h>
 #include "utils.h"
 
+void calculateDistances(float *pivot, struct data *dp)
+{
+    dp->dist = (float*)malloc(sizeof(float)*dp->num);
+    for(int i = 0; i < dp->num; i++)
+    {
+        double temp = 0;
+        for(int j = 0; j < dp->dim; j++)
+        {
+            double diff = pivot[j] - dp->points[i][j];
+            temp += diff*diff;
+        }
+        dp->dist[i] = sqrt(temp);
+    }
+}
+
 void groupedBcast_median(float *median, int leader_id, int world_rank, int num_of_proc)
 {
     if(world_rank == leader_id)

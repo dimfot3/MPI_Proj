@@ -17,12 +17,11 @@ void distributeByMedian(int leader_id, int num_of_proc, struct data* points, flo
     //termination term for recursive calls
     if(num_of_proc < 2)
         return;
+
     int world_rank;
-    
     MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
 
     calculateDistances(pivot_point, points);
-
     transmitDistances(points, world_rank, leader_id, num_of_proc);
 
     //find and transmit median to all processes
@@ -30,11 +29,12 @@ void distributeByMedian(int leader_id, int num_of_proc, struct data* points, flo
     if(world_rank == leader_id)
         median = quickselect(points->total_dist, 0, points->num*num_of_proc-1, points->num*num_of_proc/2);
     groupedBcast_median(&median, leader_id, world_rank, num_of_proc);
+    //printf("Median is %f\n", median);
 
-
+    //lower = 1 if process id < num of processes/2 else 0
     int lower = world_rank - leader_id < (int)(num_of_proc / 2) ? 1 : 0;
     splitByMedian(median, points, lower);
-    //printf("Process %d: Median is %f\n", world_rank, median);
+
     //create and broadcast transfer table
     int* table = (int*) malloc(sizeof(int)*num_of_proc);
     table[world_rank-leader_id] = points->num_to_send;
@@ -46,6 +46,7 @@ void distributeByMedian(int leader_id, int num_of_proc, struct data* points, flo
     //this block is used when median is included in distances one or more times
     if(sum(table, num_of_proc) != 0)
     {   
+        //balander table keeps track which processes have not sent their elements in first round
         int* balander_table = (int*) malloc(sizeof(int)*num_of_proc);
         for(int i = 0; i < num_of_proc; i++)
         {
@@ -66,7 +67,7 @@ void distributeByMedian(int leader_id, int num_of_proc, struct data* points, flo
         memcpy(points->points[points->idx_to_send[i]], points->points_recieved+i*points->dim, sizeof(float)*points->dim);
     }
 
-    //free unecessary resources and restore data state
+    //free unecessary resources
     free(table);
     free(points->points_to_sent);
     free(points->points_recieved);
@@ -117,11 +118,11 @@ int main(int argc, char** argv) {
     double t1, t2; 
     t1 = MPI_Wtime(); 
     distributeByMedian(0, world_size, &points, pivot_point);
-    calculateDistances(pivot_point, &points);
     MPI_Barrier(MPI_COMM_WORLD);
     t2 = MPI_Wtime(); 
 
     //autotesting
+    calculateDistances(pivot_point, &points);
     transmitDistances(&points, world_rank, 0, world_size);
     if(world_rank == 0)
     {

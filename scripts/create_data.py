@@ -4,10 +4,10 @@ import numpy as np
 
 def get_args(argv):
     num = 10
-    proc = 2
     dim = 10
+    option = 1
     try:
-        opts, args = getopt.getopt(argv, "hn:d:", ["num=", "dim="])
+        opts, args = getopt.getopt(argv, "hn:d:o:", ["num=", "dim=", "option="])
     except getopt.GetoptError:
         print('create_data.py -n <num of data> -d <point dimension> \nNOTE: num of data should be even')
         sys.exit(2)
@@ -19,23 +19,30 @@ def get_args(argv):
             num = int(arg)
         elif opt in ("-d", "--dim"):
             dim = int(arg)
+        elif opt in ("-o", "--option"):
+            option = int(arg)
     if (num % 2 != 0) :
         print("ERROR: num of data should be even")
         sys.exit()
-    return [num, dim]
+    return [num, dim, option]
 
 
-def main(num, dim):
-    #mat = np.random.rand(num, dim) * 1000
-    #mat = np.random.normal(0, 1000, [num,dim])
-    mat = np.random.exponential(scale=1000, size=[num,dim])
-    f = open(f"../data/dt_0_{num}_{dim}.txt", 'w+')
-    f.write(f"{num} {dim}\n")
-    np.savetxt(f, mat, fmt='%.2f')
+def main(num, dim, opt):
+    if(opt==1):
+        mat = np.random.rand(num, dim) * 1000
+    elif(opt==2):
+        mat = mat = np.random.normal(0, 1000, [num,dim])
+    elif(opt==3):
+        mat = np.random.exponential(scale=1000, size=[num, dim])
+    mat = mat.astype('float32')
+    info = np.array([num,dim],'float32')
+    f = open(f"../data/dt_2_{num}_{dim}.dat", 'wb')
+    info.tofile(f)
+    mat.tofile(f)
     f.close()
         
 
 
 if __name__ == "__main__":
-    num, dim = get_args(sys.argv[1:])
-    main(num, dim)
+    num, dim, opt = get_args(sys.argv[1:])
+    main(num, dim, opt)

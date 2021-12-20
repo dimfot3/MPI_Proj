@@ -33,13 +33,13 @@ def main(opt, num):
     else:
     	print("Wrong option\n")
     	sys.exit()
-    data_len = min(len(dataset), num)
     dim = np.asarray(dataset[0][0]).reshape(1,-1)[0].shape[0]
-    f = open(f"../data/dt_{opt}_{num}.txt", "w")
-    f.write(f"{data_len} {dim}\n")
-    
-    arr = dataset.data.numpy().reshape(-1,dim)
-    np.savetxt(f, arr[:data_len], fmt='%.2f')
+    data_len = min(len(dataset), num)
+    arr = dataset.data.numpy().reshape(-1,dim).astype('float32')
+    info = np.array([num,dim],'float32')
+    f = open(f"../data/dt_{opt}_{num}_{dim}.dat", 'wb')
+    info.tofile(f)
+    arr.tofile(f)
     f.close()
         
 

@@ -8,43 +8,20 @@
 #include "utils.h"
 #include "float.h"
 
-void line_to_info(char *line, int * arr, int len)
-{
-    int pos = 0;
-    for(int i = 0; i < len; i++)
-    {
-        sscanf(line+=pos, "%d%n", &(arr[i]), &pos);
-    }
-}
-
-void line_to_arr(char *line, float * arr, int len)
-{
-    int pos = 0;
-    for(int i = 0; i < len; i++)
-    {
-        sscanf(line+=pos, "%f%n", &(arr[i]), &pos);
-    }
-}
-
 void get_points(char *path, struct data *dp, int id, int total_proc, int verbose)
 {
     //opten a file that containes the points
     FILE *fp;
-    char info_buff[50];
-    fp = fopen(path, "r");
-    //read the first line which contains the info(number of points and dimension) and saves them to data structure
-    fgets(info_buff, 50, (FILE*)fp);
-    int *info  = (int*)malloc(2 * sizeof(int));
-    line_to_info(info_buff, info, 2);
-    assert(total_proc % 2 == 0);
-    assert((int)info[0] % total_proc == 0);
+    float info[2];
+    fp = fopen(path, "rb");
+    fread(info,sizeof(float),2,fp); // read 10 bytes to our buffer
     dp->num = info[0]/total_proc;
     dp->dim = info[1];
     dp->proc = total_proc;
     if(verbose)
     {
         printf("Loading file %s ...\n", path);
-        printf("Number of points: %d, Point dimensions: %d, Num of processes: %d\n", info[0], dp->dim, dp->proc);
+        printf("Number of points: %d, Point dimensions: %d, Num of processes: %d\n", (int)info[0], dp->dim, dp->proc);
         printf("Number of points per process %d\n", dp->num);
     }
     //saved in data structure the points (only the ones that belong in this process)
@@ -53,30 +30,12 @@ void get_points(char *path, struct data *dp, int id, int total_proc, int verbose
     {
         if(i >= dp->num*(id + 1))
             break;
-        int line_width = dp->dim*(4+5);
-        char buff2[line_width];
-        fgets(buff2, line_width, (FILE*)fp);
         if(i < dp->num * id)
             continue;
         dp->points[i - dp->num * id] = (float*) malloc(sizeof(float)*dp->dim);
-        line_to_arr(buff2, dp->points[i - dp->num * id], dp->dim);
+        fread(dp->points[i - dp->num * id], sizeof(float),dp->dim, fp);
     }
     fclose(fp);
-}
-
-void calculateDistances(float *pivot, struct data *dp)
-{
-    dp->dist = (float*)malloc(sizeof(float)*dp->num);
-    for(int i = 0; i < dp->num; i++)
-    {
-        float temp = 0;
-        for(int j = 0; j < dp->dim; j++)
-        {
-            float diff = pivot[j] - dp->points[i][j];
-            temp += diff*diff;
-        }
-        dp->dist[i] = sqrtf(temp);
-    }
 }
  
 void swap(float* a, float* b)

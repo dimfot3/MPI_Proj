@@ -12,6 +12,16 @@
 #include <mpi.h>
 #include "utils.h"
 
+
+/**
+ * @brief calculate the distances from a pivot
+ * 
+ * @param pivot pivot points from which distances are calculated
+ * @param dp data struct to save the distances
+ * @return void
+ */
+void calculateDistances(float *pivot, struct data *dp);
+
 //broadcast the median (on specific groups)
 void groupedBcast_median(float *median, int leader_id, int world_rank, int num_of_proc);
 

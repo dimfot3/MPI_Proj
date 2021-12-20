@@ -36,27 +36,8 @@ struct data
 };
 
 /**
- * @brief gets a string of integer elements and return the integer elements
- * 
- * @param line the line that contains the info of data(the first line)
- * @param arr array where they will be saved the info
- * @param len number of integer that contained in line
- * @return void
- */
-void line_to_info(char *line, int * arr, int len);
-
-/**
- * @brief gets a string of floats elements and return the float elements
- * 
- * @param line the line that contains the info of data(the first line)
- * @param arr array where they will be saved the float numbers
- * @param len number of floats that contained in line
- * @return void
- */
-void line_to_arr(char *line, float * arr, int len);
-
-/**
- * @brief gets data corresponding to a process
+ * @brief gets data corresponding to a process from binary file. The proccess with id=0 laods the first N/total_proc points, the second the next N/total_proc
+ * the second the next N/total_proc etc...
  * 
  * @param path absolut path to the data
  * @param dp data struct to save the points
@@ -66,15 +47,6 @@ void line_to_arr(char *line, float * arr, int len);
  * @return void
  */
 void get_points(char *path, struct data *dp, int id, int total_proc, int verbose);
-
-/**
- * @brief calculate the distances from a pivot
- * 
- * @param pivot pivot points from which distances are calculated
- * @param dp data struct to save the distances
- * @return void
- */
-void calculateDistances(float *pivot, struct data *dp);
 
 /**
  * @brief quick select that finds the kth bigger element in a float array
