@@ -36,6 +36,7 @@ def main(opt, num):
     dim = np.asarray(dataset[0][0]).reshape(1,-1)[0].shape[0]
     data_len = min(len(dataset), num)
     arr = dataset.data.numpy().reshape(-1,dim).astype('float32')
+    arr= np.around(arr[:data_len,:], decimals=2)
     info = np.array([num,dim],'float32')
     f = open(f"../data/dt_{opt}_{num}_{dim}.dat", 'wb')
     info.tofile(f)
