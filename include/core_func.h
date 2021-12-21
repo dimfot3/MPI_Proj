@@ -1,10 +1,9 @@
 /**
- * Author: Fotiou Dimitrios
- * @note: AEM:9650
- * 
- * @brief Here there are included some more specific utilities to destribute by median process
+ * @file core_func.h
+ * @author: Fotiou Dimitrios
+ * @note: 	AEM:9650
+ * @brief Here there are included some more specific utilities used in distribute by median process
  **/
-
 /**
  * @brief calculate the distances from a pivot
  * 
