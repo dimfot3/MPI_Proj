@@ -31,7 +31,7 @@ You can run ``pip install -r requirements.txt`` inside the scripts folder. Alert
 2. ``cmake ..``
 3. ``make``
 4. You can run ``mpirun -n k sprogram <path to data>`` where k is the number of processes(should be less than your actual number of cores). 
-5. Alternativly you can run parametric test with ./ses.sh script. You can specify in first loop the number of processes you want to test and pass as argument the path to a folder with many data with .dat specifier. More specifically inside the build folder run ``./ses.sh <path to folder>`` .
+5. Alternativly you can run parametric test with ./ses.sh script. You can overwrite in the first loop the default processes 2 and 4 and put any other power of 2 and pass as argument the path to a folder with many data with .dat specifier. More specifically inside the build folder run ``./ses.sh <path to folder>`` .
 
 ## Testing
 The program outputs to the console if the distribution succeded. In case of success, it saves in the out folder (inside the build) the execution times and the info of the run. This file can be read in python using pandas.
