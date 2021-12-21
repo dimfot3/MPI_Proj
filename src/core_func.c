@@ -1,3 +1,6 @@
+#ifndef COREUTILS_H
+#define COREUTILS_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -245,3 +248,5 @@ void groupedBcast_table(int* table, int leader_id, int world_rank, int num_of_pr
     }
     free(req);
 }
+
+#endif
