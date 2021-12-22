@@ -10,7 +10,9 @@ The application is to distribute N points of dimension d at k processes by the m
 This procedure is repeated recursively changing the leader and the number of processes. In the end each one process should have points with minimum distance from pivot greater than the previous process and maximum distance smaller than the next process. The program should verify the correctness of the program on its own.
 
 ## Implementation
-The application where built in C and as MPI implementation OpenMPI is used. The building tool is CMake.
+The application where built in C and as MPI implementation OpenMPI is used. The building tool is CMake. 
+
+There is available documentation in latex and html format in case you have doxygen. To create it you need to run ``doxygen sample_dox.conf`` in root directory and open html/index.htlm or run ``make`` inside the latex folder and open the created pdf.
 
 ## Dependencies
 For the main application:
@@ -31,7 +33,7 @@ You can run ``pip install -r requirements.txt`` inside the scripts folder. Alter
 2. ``cmake ..``
 3. ``make``
 4. You can run ``mpirun -n k sprogram <path to data>`` where k is the number of processes(should be less than your actual number of cores).
-5. Alternatively you can run a parametric test with ses.sh script. You can overwrite in the first loop the default processes 2 and 4 and put any other power of 2 and pass as argument the path to a folder with a lot of data with the .dat specifier. More specifically inside the build folder run ``./ses.sh <path to folder>`` . Note here that every time you cange the number of processes in the ses.sh script you need to run ``cmake ..`` again inside the build folder.
+5. Alternatively you can run a parametric test with ses.sh script. You can overwrite in the first loop the default processes 2 and 4 and put any other power of 2 and pass as argument the path to a folder with a lot of data with the .dat specifier. More specifically inside the build folder run ``./ses.sh <path to folder>`` . Note here that every time you cηange the number of processes in the ses.sh script you need to run ``cmake ..`` again inside the build folder.
 
 ## Datasets
 The application needs some data in a specific format in order to run. The data are N points of d dimension. The points are saved on a binary file in contiguous form. Moreover the first two float32 numbers are the number and the dimension of the points. Then all the coordinates of points are saved in float32 in contiguous form.
