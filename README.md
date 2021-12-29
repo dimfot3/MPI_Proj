@@ -42,7 +42,7 @@ You can create data with some scripts included in the scripts folder.
 2. To create points bases on MNIST databases run inside the scripts folder ``python3 datasets.py -n <number of points> -o <mnist dataset id>``, where the mnist dataset id is 1 for digit dataset and 2 for fashion clothes.
 
 
-Alternatively you can download some data samples used for testing from my drive: (~1GB).
+Alternatively you can download some data samples used for testing from my drive:https://drive.google.com/file/d/1GoOx96Bppyylp6Pe3CGnyaywA24NJDJd/view?usp=sharing (~1GB).
 ## Testing
 The program outputs to the console if the distribution succeeded. In case of success, it saves in the out folder (inside the build) the execution times and the info of the run. This file can be read in python using pandas.
 
