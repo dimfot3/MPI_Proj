@@ -2,9 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
-#include<math.h>
 #include <math.h>
-#include <mpi.h>
 #include "utils.h"
 #include "float.h"
 
@@ -14,6 +12,11 @@ void get_points(char *path, struct data *dp, int id, int total_proc, int verbose
     FILE *fp;
     float info[2];
     fp = fopen(path, "rb");
+    if ( fp == NULL )
+    {
+        printf( "Error loading the file with paht %s\n",  path) ;
+        exit(0);
+    }
     fread(info,sizeof(float),2,fp); // read 10 bytes to our buffer
     dp->num = info[0]/total_proc;
     dp->dim = info[1];

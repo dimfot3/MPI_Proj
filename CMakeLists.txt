@@ -17,8 +17,12 @@ target_link_libraries(utils -lm)
 add_library(core_fun src/core_func.c)
 target_link_libraries(core_fun utils -lm)
 
+#recursive destribute by median
+add_library(desbymedain src/distributeByMedian.c)
+target_link_libraries(desbymedain utils core_fun -lm)
+
 add_executable(sprogram src/sprogram.c)
-target_link_libraries(sprogram ${MPI_C_LIBRARIES} core_fun utils)
+target_link_libraries(sprogram ${MPI_C_LIBRARIES} desbymedain core_fun utils)
 
 file(COPY out DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY ses.sh DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

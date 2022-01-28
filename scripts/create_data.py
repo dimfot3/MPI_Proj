@@ -36,7 +36,7 @@ def main(num, dim, opt):
         mat = np.random.exponential(scale=1000, size=[num, dim])
     mat = mat.astype('float32')
     info = np.array([num,dim],'float32')
-    f = open(f"../data/dt_2_{num}_{dim}.dat", 'wb')
+    f = open(f"../data/dt_{opt}_{num}_{dim}.dat", 'wb')
     info.tofile(f)
     mat.tofile(f)
     f.close()

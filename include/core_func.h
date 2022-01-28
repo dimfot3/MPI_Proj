@@ -1,18 +1,9 @@
 /**
- * Author: Fotiou Dimitrios
- * AEM: 9650
- * Here there are included some more specific to destribute by median process
+ * @file core_func.h
+ * @author: Fotiou Dimitrios
+ * @note: 	AEM:9650
+ * @brief Here there are included some more specific utilities used in distribute by median process
  **/
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <string.h>
-#include <assert.h>
-#include <mpi.h>
-#include "utils.h"
-
-
 /**
  * @brief calculate the distances from a pivot
  * 
@@ -23,7 +14,18 @@
 void calculateDistances(float *pivot, struct data *dp);
 
 /**
- * @brief process with id=leader_id broadcast the median to next num_of_proc processes
+ * @brief this function utlize the transmition of the distances to the leader
+ * 
+ * @param points the distances are saved in this struct
+ * @param world_rank the id of process to call this function
+ * @param leader_id the leader process of that group
+ * @param num_of_proc the number of process for that group
+ * @return void
+ */
+void transmitDistances(struct data *points, int world_rank, int leader_id, int num_of_proc);
+
+/**
+ * @brief process with id=leader_id broadcast the median to next num_of_proc-1 processes
  * 
  * @param median the median to be sent to a group of processes
  * @param leader_id the leader process of that group
@@ -45,15 +47,26 @@ void groupedBcast_median(float *median, int leader_id, int world_rank, int num_o
 void splitByMedian(float median, struct data *points, int lower);
 
 /**
- * @brief this function utlize the transmition of the distances to the leader
+ * @brief this function populates the exchange table between the processes. 
  * 
- * @param points the distances are saved in this struct
- * @param world_rank the id of process to call this function
- * @param leader_id the leader process of that group
- * @param num_of_proc the number of process for that group
+ * @param table the array which will hold the number of points that need to sent each processes. Each process should fill its row before call this fucntion
+ * @param leader_id the leader id of the distribution
+ * @param world_rank id of the proces that call this function
+ * @param num_of_proc the total number of processes
  * @return void
  */
-void transmitDistances(struct data *points, int world_rank, int leader_id, int num_of_proc);
+void groupedBcast_table(int* table, int leader_id, int world_rank, int num_of_proc);
+
+/**
+ * @brief this function finds the next processes to exchange points.
+ * 
+ * @param co_idx the current id of process that processes with world_rank id exchanges
+ * @param leader_id the leader id of the distribution
+ * @param world_rank id of the proces that call this function
+ * @param num_of_proc the total number of processes
+ * @return void
+ */
+void getNextCoIdx(int *co_idx, int leader_id, int world_rank, int num_of_proc);
 
 /**
  * @brief this function makes the actual exchange of points based on a table
@@ -102,27 +115,7 @@ void updateTable(int* table, int process, int step);
  */
 void updateTablev2(int* table, int n_process, int step, int* balander);
 
-/**
- * @brief this function finds the next processes to exchange points.
- * 
- * @param co_idx the current id of process that processes with world_rank id exchanges
- * @param leader_id the leader id of the distribution
- * @param world_rank id of the proces that call this function
- * @param num_of_proc the total number of processes
- * @return void
- */
-void getNextCoIdx(int *co_idx, int leader_id, int world_rank, int num_of_proc);
 
-/**
- * @brief this function populates the exchange table between the processes. 
- * 
- * @param table the array which will hold the number of points that need to sent each processes. Each process should fill its row before call this fucntion
- * @param leader_id the leader id of the distribution
- * @param world_rank id of the proces that call this function
- * @param num_of_proc the total number of processes
- * @return void
- */
-void groupedBcast_table(int* table, int leader_id, int world_rank, int num_of_proc);
 
 
 
